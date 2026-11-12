@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "id": "prayer-times",
+  "name": "Prayer Times",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "Mosque icon in the Omarchy bar that opens today's Islamic prayer times for your location (GeoClue or network lookup) or any city you pick.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Prayer Times",
+    "description": "Left click opens today's prayer times, middle click re-detects your location.",
+    "category": "Info",
+    "allowMultiple": false,
+    "defaultSection": "centerBegin",
+    "defaults": {
+      "method": "Auto",
+      "asr": "Standard",
+      "timeFormat": "24h",
+      "showNextPrayer": false,
+      "notify": true,
+      "fajrOffset": 0,
+      "dhuhrOffset": 0,
+      "asrOffset": 0,
+      "maghribOffset": 0,
+      "ishaOffset": 0
+    },
+    "schema": [
+      {
+        "key": "method",
+        "type": "enum",
+        "label": "Calculation method",
+        "options": [
+          "Auto",
+          "MWL",
+          "ISNA",
+          "Egypt",
+          "Makkah",
+          "Karachi",
+          "Tehran",
+          "Morocco",
+          "Algeria",
+          "Tunisia",
+          "Gulf",
+          "Turkey",
+          "France",
+          "Singapore"
+        ],
+        "defaultValue": "Auto",
+        "description": "Auto picks the official convention for the country of the location (Morocco uses the Ministry of Habous convention)."
+      },
+      {
+        "key": "asr",
+        "type": "enum",
+        "label": "Asr juristic method",
+        "options": [
+          "Standard",
+          "Hanafi"
+        ],
+        "defaultValue": "Standard",
+        "description": "Standard (Shafi'i, Maliki, Hanbali) or Hanafi (later Asr)."
+      },
+      {
+        "key": "timeFormat",
+        "type": "enum",
+        "label": "Time format",
+        "options": [
+          "24h",
+          "12h"
+        ],
+        "defaultValue": "24h"
+      },
+      {
+        "key": "showNextPrayer",
+        "type": "boolean",
+        "label": "Show next prayer in the bar",
+        "defaultValue": false,
+        "description": "Print the next prayer and its time beside the mosque icon."
+      },
+      {
+        "key": "notify",
+        "type": "boolean",
+        "label": "Notify at prayer time",
+        "defaultValue": true,
+        "description": "Show a desktop notification when each prayer time arrives."
+      },
+      {
+        "key": "fajrOffset",
+        "type": "integer",
+        "label": "Fajr adjustment (minutes)",
+        "min": -30,
+        "max": 30,
+        "step": 1,
+        "defaultValue": 0
+      },
+      {
+        "key": "dhuhrOffset",
+        "type": "integer",
+        "label": "Dhuhr adjustment (minutes)",
+        "min": -30,
+        "max": 30,
+        "step": 1,
+        "defaultValue": 0
+      },
+      {
+        "key": "asrOffset",
+        "type": "integer",
+        "label": "Asr adjustment (minutes)",
+        "min": -30,
+        "max": 30,
+        "step": 1,
+        "defaultValue": 0
+      },
+      {
+        "key": "maghribOffset",
+        "type": "integer",
+        "label": "Maghrib adjustment (minutes)",
+        "min": -30,
+        "max": 30,
+        "step": 1,
+        "defaultValue": 0
+      },
+      {
+        "key": "ishaOffset",
+        "type": "integer",
+        "label": "Isha adjustment (minutes)",
+        "min": -30,
+        "max": 30,
+        "step": 1,
+        "defaultValue": 0
+      }
+    ]
+  }
+}

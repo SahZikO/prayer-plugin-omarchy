@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+ip_json=$(curl -fsS --max-time 5 https://geo.omarchy.org/ 2>/dev/null || true)
+if ! jq -e '.latitude and .longitude' >/dev/null 2>&1 <<<"$ip_json"; then
+  ip_json='{}'
+fi
+
+system_zone=$(timedatectl show -p Timezone --value 2>/dev/null || true)
+
+lat="" lon=""
+where_am_i=""
+for candidate in /usr/lib/geoclue-2.0/demos/where-am-i /usr/libexec/geoclue-2.0/demos/where-am-i; do
+  [[ -x $candidate ]] && where_am_i=$candidate && break
+done
+
+geoclue_agent_running() {
+  pgrep -x agent >/dev/null 2>&1 || pgrep -f 'agent-geoclue2|geoclue-agent' >/dev/null 2>&1
+}
+
+if [[ -n $where_am_i ]] && geoclue_agent_running; then
+  out=$(timeout 15 "$where_am_i" -t 10 -a 8 2>/dev/null || true)
+  read -r lat lon acc < <(awk -F: '
+    /Latitude/  { gsub(/[^0-9.\-]/, "", $2); la = $2 }
+    /Longitude/ { gsub(/[^0-9.\-]/, "", $2); lo = $2 }
+    /Accuracy/  { gsub(/[^0-9.]/, "", $2); if (best == "" || $2 + 0 < best + 0) { best = $2; bla = la; blo = lo } }
+    END { if (best != "") print bla, blo, best }' <<<"$out")
+  if [[ -z ${acc:-} ]] || (( ${acc%.*} > 5000 )); then
+    lat="" lon=""
+  fi
+fi
+
+if [[ -n $lat && -n $lon ]]; then
+  jq -cn --argjson ip "$ip_json" --arg lat "$lat" --arg lon "$lon" --arg tz "$system_zone" '{
+    name: ($ip.name // "Current location"),
+    latitude: ($lat | tonumber), longitude: ($lon | tonumber),
+    country: ($ip.country // ""), timezone: ($tz | if . == "" then ($ip.timezone // "") else . end),
+    source: "gps"
+  }'
+  exit 0
+fi
+
+if [[ $ip_json != '{}' ]]; then
+  jq -c --arg tz "$system_zone" '{
+    name: (.name // ""), latitude, longitude, country: (.country // ""),
+    timezone: (.timezone // $tz), source: "network"
+  }' <<<"$ip_json"
+  exit 0
+fi
+
+exit 1
