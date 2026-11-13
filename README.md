@@ -17,7 +17,7 @@ A mosque icon in the [Omarchy](https://omarchy.org) bar. Click it to see today's
 ## Install
 
 ```bash
-omarchy plugin add https://github.com/SahZikO/omarchy-prayer-times.git --enable
+omarchy plugin add https://github.com/SahZikO/prayer-plugin-omarchy.git --enable
 ```
 
 When asked where to put it, `centerBegin` places it just left of the clock.

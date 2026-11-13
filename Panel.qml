@@ -30,6 +30,7 @@ Panel {
 
   readonly property string stateDir: Quickshell.env("HOME") + "/.local/state/prayer-times"
   readonly property string locatorPath: decodeURIComponent(Qt.resolvedUrl("bin/prayer-locate").toString().replace(/^file:\/\//, ""))
+  readonly property string iconDir: decodeURIComponent(Qt.resolvedUrl("icons").toString().replace(/^file:\/\//, ""))
 
   property string mode: "auto"
   property var manualLocation: null
@@ -231,7 +232,7 @@ Panel {
       if (p.key === "sunrise" || isNaN(p.epoch)) continue
       if (nowMs >= p.epoch && nowMs - p.epoch < 120000 && p.epoch > lastNotified) {
         lastNotified = p.epoch
-        notifyProc.command = ["notify-send", "-a", "Prayer Times", "-i", "appointment-soon",
+        notifyProc.command = ["notify-send", "-a", "Prayer Times", "-i", root.iconDir + "/" + p.key + ".svg",
           "It's time for " + Model.NAMES[p.key].en + " · " + Model.NAMES[p.key].ar,
           Model.formatClock(p.epoch, zoneOffset, use12h) + " — " + location.name]
         notifyProc.running = true
